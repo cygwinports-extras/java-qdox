@@ -1,0 +1,7 @@
+category: Java
+requires:
+sdesc: "Java library for parsing class/method definitions"
+ldesc: "QDox is a high speed, small footprint parser for extracting 
+class/interface/method definitions from source files complete with 
+JavaDoc @tags. It is designed to be used by active code generators or 
+documentation tools."

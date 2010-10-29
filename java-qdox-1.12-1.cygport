@@ -1,0 +1,27 @@
+JAVA_CLASSPATH="junit.jar"
+SVN_URI="https://svn.codehaus.org/qdox"
+SVN_TAG="qdox-${PV}"
+inherit ant svn
+
+
+HOMEPAGE="http://qdox.codehaus.org/"
+
+src_compile() {
+	check_prog_req byaccj
+	check_prog_req jflex
+	lndirs
+
+	cd ${B}/src/grammar
+	byaccj -v -Jnorun -Jnoconstruct -Jclass=Parser -Jsemantic=Value -Jpackage=com.thoughtworks.qdox.parser.impl parser.y || error "byaccj failed"
+	jflex --skel skeleton.inner lexer.flex || error "jflex failed"
+
+	cd ${B}
+	mkdir -p build/classes src/java/com/thoughtworks/qdox/parser/impl
+	mv src/grammar/*.java src/java/com/thoughtworks/qdox/parser/impl/
+	cygjavac -cp ${CLASSPATH}:${ANT_HOME}/lib/ant.jar -d build/classes $(find src/java/ -name '*.java')
+	cygjar cf build/qdox-${PV}.jar -C build/classes com/
+	cygjavadoc -d build/javadoc -sourcepath src/java -subpackages com
+}
+
+ANT_INSTALL_JARS="build/*.jar"
+ANT_INSTALL_JAVADOC="build/javadoc"
